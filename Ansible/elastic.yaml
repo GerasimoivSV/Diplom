@@ -11,7 +11,7 @@
 
   - name: Копируем конфиг файл elasticsearch
     copy:
-      src: /home/user/111/elastic.yml
+      src: /home/user/ansible/elastic.yml
       dest: /etc/elasticsearch/elasticsearch.yml
 
   - name: daemon_reload
