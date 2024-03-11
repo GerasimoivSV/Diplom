@@ -14,16 +14,9 @@
       src: /home/user/ansible/elastic.yml
       dest: /etc/elasticsearch/elasticsearch.yml
 
-  - name: daemon_reload
+  - name: daemon_reload автозагрузка и перезапуск elasticsearch
     systemd:
       daemon_reload: true
-
-  - name: добавляем elasticsearch в автозагрузку
-    systemd:
       name: elasticsearch.service
       enabled: true
-
-  - name: Перезапускаем службы
-    systemd:
-      name: elasticsearch.service
       state: started
