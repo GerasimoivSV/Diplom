@@ -2,9 +2,7 @@
 - name: Установка Zabbix
   hosts: mon
   become: true
-  vars:
-    pass_zabbixdb: zabbix
-
+ 
   tasks:
     - name: Загрузка Zabbix репозитория
       shell: wget https://repo.zabbix.com/zabbix/6.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_6.0-4+ubuntu22.04_all.deb
@@ -33,22 +31,13 @@
           - zabbix-agent
         state: present
 
-    - name: Создание пользователя PostgreSQL для Zabbix
-      expect:
-        command: sudo -u postgres createuser --pwprompt zabbix
-        responses:
-          (?i).*(Enter password for new role)(.*):
-           - '{{ pass_zabbixdb }}'
-          (?i).*(Enter it again)(.*):
-           - '{{ pass_zabbixdb }}'
-
-- name: Создание базы данных PostgreSQL для Zabbix
-      shell: >
+   - name: Создание пользователя и базы данных PostgreSQL для Zabbix
+      shell: |
+        sudo -u postgres createuser --pwprompt zabbix
         sudo -u postgres createdb -O zabbix zabbix
-
-    - name: Импортируеv начальную схему и данные
-      shell:
         zcat /usr/share/zabbix-sql-scripts/postgresql/server.sql.gz | sudo -u zabbix psql zabbix
+      args:
+        executable: /bin/bash
 
     - name: Настройка DBPassword в конфигурационном файле Zabbix
       lineinfile:
@@ -66,3 +55,4 @@
         - zabbix-server
         - zabbix-agent
         - apache2
+        
